@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Devices;
 use Illuminate\Http\Request;
+use App\Events\NewDataEvent;
 
 class DeviceController extends Controller
 {
@@ -22,13 +23,18 @@ class DeviceController extends Controller
         $lastData = $device->datas()->latest('timestamp')->first();
 
         $data = [];
-        // Jika data terakhir ditemukan, kembalikan respons JSON
+        // Jika data terakhir ditemukan, kirimkan event NewDataEvent
         if ($lastData) {
             $data = [
+                'id' => $device->id,
                 'dev_eui' => $device->dev_eui,
                 'data' => $lastData
             ];
+
+            // Kirim event ke Pusher
+            event(new NewDataEvent($lastData));
         }
+
         return view('data', compact('data'));
     }
 }
