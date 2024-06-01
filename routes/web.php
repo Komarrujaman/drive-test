@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\SubsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SSEController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +20,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('monitor', [SubsController::class, 'index']);
+Route::post('/monitor', [SubsController::class, 'index']);
+Route::post('/show-data', [SubsController::class, 'show']);
+
+// Device
+Route::get('device', [DeviceController::class, 'index'])->name('home');
+
+// Data
+Route::get('device/{id}', [DeviceController::class, 'getLastData']);
