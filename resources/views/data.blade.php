@@ -54,7 +54,7 @@
             }
 
             // Panggil fungsi fetchData setiap beberapa detik (misalnya, setiap 5 detik)
-            setInterval(fetchData, 5000); // 5000 milliseconds = 5 seconds
+            setInterval(fetchData, 500); // 5000 milliseconds = 5 seconds
         });
     </script>
 </body>
