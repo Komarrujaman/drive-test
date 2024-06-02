@@ -30,11 +30,30 @@ class DeviceController extends Controller
                 'dev_eui' => $device->dev_eui,
                 'data' => $lastData
             ];
-
-            // Kirim event ke Pusher
-            event(new NewDataEvent($lastData));
         }
 
         return view('data', compact('data'));
+    }
+
+    public function getLastDataAjax($deviceId)
+    {
+        // Ambil device berdasarkan ID
+        $device = Devices::findOrFail($deviceId);
+
+        // Ambil data terakhir berdasarkan timestamp
+        $lastData = $device->datas()->latest('timestamp')->first();
+
+        $data = [];
+        // Jika data terakhir ditemukan, kirimkan data JSON
+        if ($lastData) {
+            $data = [
+                'dev_eui' => $device->dev_eui,
+                'snr' => $lastData->snr,
+                'rssi' => $lastData->rssi,
+                'last_update' => \Carbon\Carbon::parse($lastData->timestamp)->format('d/m/Y - H:i:s')
+            ];
+        }
+
+        return response()->json($data);
     }
 }

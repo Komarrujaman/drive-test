@@ -28,3 +28,4 @@ Route::get('device', [DeviceController::class, 'index'])->name('home');
 
 // Data
 Route::get('device/{id}', [DeviceController::class, 'getLastData']);
+Route::get('device/{id}/ajax', [DeviceController::class, 'getLastDataAjax']);

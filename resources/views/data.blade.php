@@ -21,37 +21,41 @@
             </div>
             <div class="card-footer">
                 <a class="btn btn-primary" href="{{route('home')}}">Kembali</a>
-                <a class="btn btn-primary" href="{{url('device/'. $data['id'])}}">Get Data</a>
+                <a class="btn btn-success" href="{{url('device/'. $data['id'])}}">Get Data</a>
             </div>
         </div>
     </div>
 
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script>
-        // Import Echo instance
-        import echo from './resources/js/bootstrap';
-
-        // Mendengarkan event new-data-channel
-        echo.channel('new-data-channel')
-            .listen('.new-data-event', function(data) {
-                // Memperbarui data pada halaman dengan data yang baru
-                updateDataOnPage(data);
-            });
-
-        // Fungsi untuk memperbarui data pada halaman
-        function updateDataOnPage(data) {
-            // Memperbarui elemen-elemen HTML dengan data yang baru
-            document.getElementById('devEui').innerText = data.dev_eui;
-            document.getElementById('snr').innerText = data.data.snr;
-            document.getElementById('rssi').innerText = data.data.rssi;
-            document.getElementById('lastUpdate').innerText = data.data.timestamp;
-        }
-    </script>
-
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            // Fungsi untuk memperbarui data secara berkala
+            function fetchData() {
+                $.ajax({
+                    url: "{{ url('device/' . $data['id'] . '/ajax') }}",
+                    type: 'GET',
+                    success: function(response) {
+                        // Periksa apakah ada data baru
+                        if (response.dev_eui !== undefined) {
+                            // Perbarui tampilan dengan data baru
+                            $('#devEui').text(response.dev_eui);
+                            $('#snr').text(response.snr);
+                            $('#rssi').text(response.rssi);
+                            $('#lastUpdate').text(response.last_update);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
 
+            // Panggil fungsi fetchData setiap beberapa detik (misalnya, setiap 5 detik)
+            setInterval(fetchData, 5000); // 5000 milliseconds = 5 seconds
+        });
+    </script>
 </body>
 
 </html>
